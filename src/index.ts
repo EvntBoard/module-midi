@@ -10,13 +10,13 @@ const evntComClient = getEvntComClientFromChildProcess();
 const evntComServer = getEvntComServerFromChildProcess();
 
 // real starting
-const inputManager = {};
+const inputManager: Record<string, Input> = {};
 
 const load = async () => {
   try {
-    DEVICES.forEach((device) => {
+    DEVICES.forEach((device:string) => {
       const input = new Input(device);
-      inputManager[device] =
+      inputManager[device] = input;
 
       input.on('noteon', (message) => {
         evntComClient?.newEvent('midi-noteon', message, { emitter: EMITTER })
