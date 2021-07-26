@@ -1,6 +1,6 @@
 import process from 'process'
 import { getEvntComClientFromChildProcess, getEvntComServerFromChildProcess } from "evntboard-communicate";
-import { Input } from 'easymidi';
+import { Input, getInputs } from 'easymidi';
 
 // parse params
 const { name: NAME, customName: CUSTOM_NAME, config: { devices: DEVICES } } = JSON.parse(process.argv[2])
@@ -19,56 +19,56 @@ const load = async () => {
       inputManager[device] = input;
 
       input.on('noteon', (message) => {
-        evntComClient?.newEvent('midi-noteon', message, { emitter: EMITTER })
+        evntComClient?.newEvent('midi-note-on', message, { emitter: EMITTER })
       });
-      // input.on('noteoff', (message) => {
-      //   console.log('noteoff', message);
-      // });
-      // input.on('poly aftertouch', (message) => {
-      //   console.log('poly aftertouch', message);
-      // });
-      // input.on('cc', (message) => {
-      //   console.log('cc', message);
-      // });
-      // input.on('program', (message) => {
-      //   console.log('program', message);
-      // });
-      // input.on('channel aftertouch', (message) => {
-      //   console.log('channel aftertouch', message);
-      // });
-      // input.on('pitch', (message) => {
-      //   console.log('pitch', message);
-      // });
-      // input.on('position', (message) => {
-      //   console.log('position', message);
-      // });
-      // input.on('mtc', (message) => {
-      //   console.log('mtc', message);
-      // });
-      // input.on('select', (message) => {
-      //   console.log('select', message);
-      // });
-      // input.on('clock', (message) => {
-      //   console.log('clock', message);
-      // });
-      // input.on('start', (message) => {
-      //   console.log('start', message);
-      // });
-      // input.on('continue', (message) => {
-      //   console.log('continue', message);
-      // });
-      // input.on('stop', (message) => {
-      //   console.log('stop', message);
-      // });
-      // input.on('activesense', (message) => {
-      //   console.log('activesense', message);
-      // });
-      // input.on('reset', (message) => {
-      //   console.log('reset', message);
-      // });
-      // input.on('sysex', (message) => {
-      //   console.log('sysex', message);
-      // });
+      input.on('noteoff', (message) => {
+        evntComClient?.newEvent('midi-note-off', message, { emitter: EMITTER })
+      });
+      input.on('poly aftertouch', (message) => {
+        evntComClient?.newEvent('midi-poly-aftertouch', message, { emitter: EMITTER })
+      });
+      input.on('cc', (message) => {
+        evntComClient?.newEvent('midi-control-change', message, { emitter: EMITTER })
+      });
+      input.on('program', (message) => {
+        evntComClient?.newEvent('midi-program', message, { emitter: EMITTER })
+      });
+      input.on('channel aftertouch', (message) => {
+        evntComClient?.newEvent('midi-channel-aftertouch', message, { emitter: EMITTER })
+      });
+      input.on('pitch', (message) => {
+        evntComClient?.newEvent('midi-pitch', message, { emitter: EMITTER })
+      });
+      input.on('position', (message) => {
+        evntComClient?.newEvent('midi-position', message, { emitter: EMITTER })
+      });
+      input.on('mtc', (message) => {
+        evntComClient?.newEvent('midi-mtc', message, { emitter: EMITTER })
+      });
+      input.on('select', (message) => {
+        evntComClient?.newEvent('midi-select', message, { emitter: EMITTER })
+      });
+      input.on('clock', () => {
+        evntComClient?.newEvent('midi-clock', null, { emitter: EMITTER })
+      });
+      input.on('start', () => {
+        evntComClient?.newEvent('midi-start', null, { emitter: EMITTER })
+      });
+      input.on('continue', () => {
+        evntComClient?.newEvent('midi-continue', null, { emitter: EMITTER })
+      });
+      input.on('stop', () => {
+        evntComClient?.newEvent('midi-stop', null, { emitter: EMITTER })
+      });
+      input.on('activesense', () => {
+        evntComClient?.newEvent('midi-active-sense', null, { emitter: EMITTER })
+      });
+      input.on('reset', () => {
+        evntComClient?.newEvent('midi-reset', null, { emitter: EMITTER })
+      });
+      input.on('sysex', (message) => {
+        evntComClient?.newEvent('midi-sysex', message, { emitter: EMITTER })
+      });
     });
   } catch (e) {
     console.error(e)
@@ -77,3 +77,5 @@ const load = async () => {
 }
 
 evntComServer.expose('load', load)
+
+evntComServer.expose('getInputs', () => getInputs())
