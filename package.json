@@ -47,5 +47,14 @@
     "ts-node": "^10.2.1",
     "tslint-plugin-prettier": "^2.3.0",
     "typescript": "^4.4.2"
+  },
+  "pkg": {
+    "scripts": [
+      "dist/**/*.js",
+      "node_modules/evntcom-js/dist/**/*.js"
+    ],
+    "assets": [
+      "node_modules/midi/build/Release/midi.node"
+    ]
   }
 }
