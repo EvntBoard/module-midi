@@ -29,31 +29,53 @@ jobs:
           sudo apt-get update
           sudo apt-get install libasound2-dev
 
-      - name: Build
+      - name: Linux x64 build
+        if: startsWith(matrix.os, 'ubuntu')
         run: |
           yarn
           yarn prebuild:x64
-
-      - name: Linux x64 build and pack
-        if: startsWith(matrix.os, 'ubuntu')
-        run: |
           yarn build:x64:linux
           cd build/linux-x64
           npx bestzip ../../midi-linux-x64.zip .
 
-      - name: Windows x64 build and pack
+      - name: Windows x64 build
         if: startsWith(matrix.os, 'windows')
         run: |
+          yarn
+          yarn prebuild:x64
           yarn build:x64:win
           cd build/win-x64
           npx bestzip ../../midi-win-x64.zip .
 
-      - name: Macos x64 build and pack
+      - name: Macos x64 build
         if: startsWith(matrix.os, 'macos')
         run: |
+          yarn
+          yarn prebuild:x64
           yarn build:x64:macos
           cd build/macos-x64
           npx bestzip ../../midi-macos-x64.zip .
+
+      - name: Artefact Macos x64
+        uses: actions/upload-artifact@v2
+        if: startsWith(matrix.os, 'macos')
+        with:
+          name: Twitch MacOS x64
+          path: ./build/macos-x64
+
+      - name: Artefact Linux x64
+        if: startsWith(matrix.os, 'ubuntu')
+        uses: actions/upload-artifact@v2
+        with:
+          name: Twitch Linux x64
+          path: ./build/linux-x64
+
+      - name: Artefact Win x64
+        if: startsWith(matrix.os, 'windows')
+        uses: actions/upload-artifact@v2
+        with:
+          name: Twitch Windows x64
+          path: ./build/win-x64
 
       - name: Release
         uses: softprops/action-gh-release@v1
