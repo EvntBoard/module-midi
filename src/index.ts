@@ -1,80 +1,87 @@
-import process from 'process'
-import { getEvntComClientFromChildProcess, getEvntComServerFromChildProcess } from "evntboard-communicate";
+require("dotenv").config();
+import { EvntComNode } from "evntcom-js/dist/node";
 import { Input, getInputs } from 'easymidi';
 
-// parse params
-const { name: NAME, customName: CUSTOM_NAME, config: { device: DEVICE, list: LIST } } = JSON.parse(process.argv[2])
-const EMITTER = CUSTOM_NAME || NAME
+const NAME: string = process.env.EVNTBOARD_NAME || "midi";
+const HOST: string = process.env.EVNTBOARD_HOST || "localhost";
+const PORT: number = process.env.EVNTBOARD_PORT ? parseInt(process.env.EVNTBOARD_PORT) : 5001;
+const DEVICE: string = process.env.EVNTBOARD_CONFIG_DEVICE;
+const LIST_DEVICE: boolean = process.env.EVNTBOARD_CONFIG_LIST_DEVICE === "true";
 
-const evntComClient = getEvntComClientFromChildProcess();
-const evntComServer = getEvntComServerFromChildProcess();
+const evntCom = new EvntComNode({
+  name: NAME,
+  port: PORT,
+  host: HOST,
+})
 
-// real starting
 let input: Input;
 
-const load = async () => {
-  if (LIST) {
+evntCom.onOpen = async () => {
+  await evntCom.callMethod("newEvent", ['midi-load', null, { emitter: NAME }])
+  if (LIST_DEVICE) {
     console.log('Available midi devices', getInputs())
   }
   try {
+    if (!DEVICE) {
+      throw new Error('No device set midi module ...')
+    }
+
     input = new Input(DEVICE);
     input.on('noteon', (message) => {
-      evntComClient?.newEvent('midi-note-on', message, { emitter: EMITTER })
+      evntCom.callMethod("newEvent", ['midi-note-on', message, { emitter: NAME }])
     });
     input.on('noteoff', (message) => {
-      evntComClient?.newEvent('midi-note-off', message, { emitter: EMITTER })
+      evntCom.callMethod("newEvent", ['midi-note-off', message, { emitter: NAME }])
     });
     input.on('poly aftertouch', (message) => {
-      evntComClient?.newEvent('midi-poly-aftertouch', message, { emitter: EMITTER })
+      evntCom.callMethod("newEvent", ['midi-poly-aftertouch', message, { emitter: NAME }])
     });
     input.on('cc', (message) => {
-      evntComClient?.newEvent('midi-control-change', message, { emitter: EMITTER })
+      evntCom.callMethod("newEvent", ['midi-control-change', message, { emitter: NAME }])
     });
     input.on('program', (message) => {
-      evntComClient?.newEvent('midi-program', message, { emitter: EMITTER })
+      evntCom.callMethod("newEvent", ['midi-program', message, { emitter: NAME }])
     });
     input.on('channel aftertouch', (message) => {
-      evntComClient?.newEvent('midi-channel-aftertouch', message, { emitter: EMITTER })
+      evntCom.callMethod("newEvent", ['midi-channel-aftertouch', message, { emitter: NAME }])
     });
     input.on('pitch', (message) => {
-      evntComClient?.newEvent('midi-pitch', message, { emitter: EMITTER })
+      evntCom.callMethod("newEvent", ['midi-pitch', message, { emitter: NAME }])
     });
     input.on('position', (message) => {
-      evntComClient?.newEvent('midi-position', message, { emitter: EMITTER })
+      evntCom.callMethod("newEvent", ['midi-position', message, { emitter: NAME }])
     });
     input.on('mtc', (message) => {
-      evntComClient?.newEvent('midi-mtc', message, { emitter: EMITTER })
+      evntCom.callMethod("newEvent", ['midi-mtc', message, { emitter: NAME }])
     });
     input.on('select', (message) => {
-      evntComClient?.newEvent('midi-select', message, { emitter: EMITTER })
+      evntCom.callMethod("newEvent", ['midi-select', message, { emitter: NAME }])
     });
     input.on('clock', () => {
-      evntComClient?.newEvent('midi-clock', null, { emitter: EMITTER })
+      evntCom.callMethod("newEvent", ['midi-clock', null, { emitter: NAME }])
     });
     input.on('start', () => {
-      evntComClient?.newEvent('midi-start', null, { emitter: EMITTER })
+      evntCom.callMethod("newEvent", ['midi-start', null, { emitter: NAME }])
     });
     input.on('continue', () => {
-      evntComClient?.newEvent('midi-continue', null, { emitter: EMITTER })
+      evntCom.callMethod("newEvent", ['midi-continue', null, { emitter: NAME }])
     });
     input.on('stop', () => {
-      evntComClient?.newEvent('midi-stop', null, { emitter: EMITTER })
+      evntCom.callMethod("newEvent", ['midi-stop', null, { emitter: NAME }])
     });
     input.on('activesense', () => {
-      evntComClient?.newEvent('midi-active-sense', null, { emitter: EMITTER })
+      evntCom.callMethod("newEvent", ['midi-active-sense', null, { emitter: NAME }])
     });
     input.on('reset', () => {
-      evntComClient?.newEvent('midi-reset', null, { emitter: EMITTER })
+      evntCom.callMethod("newEvent", ['midi-reset', null, { emitter: NAME }])
     });
     input.on('sysex', (message) => {
-      evntComClient?.newEvent('midi-sysex', message, { emitter: EMITTER })
+      evntCom.callMethod("newEvent", ['midi-sysex', message, { emitter: NAME }])
     });
   } catch (e) {
     console.error(e)
-    evntComClient?.newEvent('midi-error', null, { emitter: EMITTER })
+    await evntCom.callMethod("newEvent", ['midi-error', e, {emitter: NAME}])
   }
 }
 
-evntComServer.expose('load', load)
-
-evntComServer.expose('getInputs', () => getInputs())
+evntCom.expose('getInputs', async () => getInputs())

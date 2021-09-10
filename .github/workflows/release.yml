@@ -1,6 +1,7 @@
 name: Module MIDI
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - "v*.*.*"
@@ -20,7 +21,7 @@ jobs:
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 16
 
       - name: Linux Deps
         if: matrix.os == 'ubuntu-latest'
@@ -31,25 +32,28 @@ jobs:
       - name: Build
         run: |
           yarn
-          yarn build
+          yarn prebuild:x64
 
-      - name: Pack Linux
+      - name: Linux x64 build and pack
         if: startsWith(matrix.os, 'ubuntu')
         run: |
-          cd dist
-          npx bestzip ../module-midi-linux.zip .
+          yarn build:x64:linux
+          cd build/linux-x64
+          npx bestzip ../../midi-linux-x64.zip .
 
-      - name: Pack Windows
+      - name: Windows x64 build and pack
         if: startsWith(matrix.os, 'windows')
         run: |
-          cd dist
-          npx bestzip ../module-midi-windows.zip .
+          yarn build:x64:win
+          cd build/win-x64
+          npx bestzip ../../midi-win-x64.zip .
 
-      - name: Pack Macos
+      - name: Macos x64 build and pack
         if: startsWith(matrix.os, 'macos')
         run: |
-          cd dist
-          npx bestzip ../module-midi-macos.zip .
+          yarn build:x64:macos
+          cd build/macos-x64
+          npx bestzip ../../midi-macos-x64.zip .
 
       - name: Release
         uses: softprops/action-gh-release@v1
