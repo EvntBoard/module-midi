@@ -7,7 +7,7 @@
     "name": "midi", // if no name is provided default value is "midi"
     "config": {
       "device": "YOUR DEVICE NAME", 
-      "list_device": true, // true or false
+      "list_device": true // true or false
     }
 }
 ```
@@ -23,14 +23,14 @@ Otherwise you can't filter events from the specific midi source !
     "name": "midi-mini-32",
     "config": {
       "device": "YOUR DEVICE NAME",
-      "list_device": true, // true or false
+      "list_device": true // true or false
     }
   },
   {
     "name": "midi-keystation-m12",
     "config": {
       "device": "YOUR DEVICE NAME",
-      "list_device": true, // true or false
+      "list_device": true // true or false
     }
   }
 ]
