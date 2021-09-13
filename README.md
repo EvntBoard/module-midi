@@ -15,7 +15,7 @@
 ## Multiple config
 
 Name property should be different :)
-Otherwise you can filter event from the specific source !
+Otherwise you can't filter events from the specific midi source !
 
 ```json5
 [
