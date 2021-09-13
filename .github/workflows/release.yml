@@ -37,7 +37,6 @@ jobs:
           yarn build:x64:linux
           mkdir -p build/linux-x64/midi/build/Release/
           cp node_modules/midi/build/Release/midi.node build/linux-x64/midi/build/Release/midi.node
-          npx tree-node-cli -I "node_modules" -a ./
           cd build/linux-x64
           npx bestzip ../../midi-linux-x64.zip .
 
@@ -49,7 +48,6 @@ jobs:
           yarn build:x64:win
           mkdir -p build/win-x64/midi/build/Release/
           copy node_modules/midi/build/Release/midi.node ./build/win-x64/midi/build/Release/midi.node
-          npx tree-node-cli -I "node_modules" -a ./
           cd build/win-x64
           npx bestzip ../../midi-win-x64.zip .
 
@@ -61,12 +59,8 @@ jobs:
           yarn build:x64:macos
           mkdir -p build/macos-x64/midi/build/Release/
           cp node_modules/midi/build/Release/midi.node ./build/macos-x64/midi/build/Release/midi.node
-          npx tree-node-cli -I "node_modules" -a ./
           cd build/macos-x64
           npx bestzip ../../midi-macos-x64.zip .
-
-      - name: DEBUG
-        run: npx tree-node-cli -I "node_modules" -a ./
 
       - name: Artefact Macos x64
         uses: actions/upload-artifact@v2
