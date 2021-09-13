@@ -47,7 +47,8 @@ jobs:
           yarn
           yarn prebuild:x64
           yarn build:x64:win
-          copy node_modules/midi/build/Release/midi.node ./build/macos-x64/midi/build/Release/midi.node
+          mkdir -p build/win-x64/midi/build/Release/
+          copy node_modules/midi/build/Release/midi.node ./build/win-x64/midi/build/Release/midi.node
           npx tree-node-cli -I "node_modules" -a ./
           cd build/win-x64
           npx bestzip ../../midi-win-x64.zip .
@@ -58,6 +59,7 @@ jobs:
           yarn
           yarn prebuild:x64
           yarn build:x64:macos
+          mkdir -p build/macos-x64/midi/build/Release/
           cp node_modules/midi/build/Release/midi.node ./build/macos-x64/midi/build/Release/midi.node
           npx tree-node-cli -I "node_modules" -a ./
           cd build/macos-x64
