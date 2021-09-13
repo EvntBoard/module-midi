@@ -35,8 +35,8 @@ jobs:
           yarn
           yarn prebuild:x64
           yarn build:x64:linux
-          npx tree-node-cli -a ./node_modules/midi/
-          cp node_modules/midi/build/Release/midi.node build/macos-x64/midi/build/Release/midi.node
+          mkdir -p build/linux-x64/midi/build/Release/
+          cp node_modules/midi/build/Release/midi.node build/linux-x64/midi/build/Release/midi.node
           npx tree-node-cli -I "node_modules" -a ./
           cd build/linux-x64
           npx bestzip ../../midi-linux-x64.zip .
