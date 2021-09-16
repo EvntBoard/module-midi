@@ -38,21 +38,21 @@ jobs:
         uses: actions/upload-artifact@v2
         if: startsWith(matrix.os, 'macos')
         with:
-          name: Midi MacOS x64
+          name: Module Midi MacOS x64
           path: ./dist/
 
       - name: Artefact Linux x64
         if: startsWith(matrix.os, 'ubuntu')
         uses: actions/upload-artifact@v2
         with:
-          name: Midi Linux x64
+          name: Module Midi Linux x64
           path: ./dist/
 
       - name: Artefact Win x64
         if: startsWith(matrix.os, 'windows')
         uses: actions/upload-artifact@v2
         with:
-          name: Midi Windows x64
+          name: Module Midi Windows x64
           path: ./dist/
 
       - name: Pack Linux x64
