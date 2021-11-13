@@ -18,7 +18,7 @@ export class MidiConnexion {
       host: evntBoardHost,
     });
 
-    this.evntCom.onOpen = () => {
+    this.evntCom.on('open', () => {
       this.evntCom.notify("newEvent", [
         "midi-load",
         null,
@@ -160,8 +160,10 @@ export class MidiConnexion {
           { emitter: this.config.name },
         ]);
       }
-    };
+    });
 
     this.evntCom.expose("getInputs", async () => getInputs());
+
+    this.evntCom.connect()
   }
 }
