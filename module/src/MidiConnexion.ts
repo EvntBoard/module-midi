@@ -1,9 +1,9 @@
-import { EvntComNode } from "evntcom-js/dist/node";
+import { EvntCom } from "evntcom-js";
 import { Input, getInputs } from "easymidi";
 import { IConfigItem } from "./ConfigLoader";
 
 export class MidiConnexion {
-  private evntCom: EvntComNode;
+  private evntCom: EvntCom;
   private config: IConfigItem;
 
   constructor(
@@ -12,7 +12,7 @@ export class MidiConnexion {
     config: IConfigItem
   ) {
     this.config = config;
-    this.evntCom = new EvntComNode({
+    this.evntCom = new EvntCom({
       name: config.name,
       port: evntBoardPort,
       host: evntBoardHost,

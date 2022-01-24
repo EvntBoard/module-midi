@@ -1,4 +1,4 @@
-name: Module MIDI
+name: Module Midi
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
       - "v*.*.*"
 
 jobs:
-  module-midi:
+  release:
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
@@ -32,35 +32,75 @@ jobs:
           sudo apt-get update
           sudo apt-get install libasound2-dev
 
-      - name: Build
+      - name: Prepare dist
+        run: mkdir ./dist
+
+      - name: Copy metadata.json
         run: |
+          cp ./metadata.json ./dist/metadata.json
+
+      - name: Copy defaultConfig.json
+        run: |
+          cp ./config.json ./dist/config.json
+
+      - name: Populate metadata.json __MODULE_REPO__
+        uses: jacobtomlinson/gha-find-replace@v2
+        with:
+          find: "__MODULE_REPO__"
+          replace: ${{ github.repository }}
+          regex: false
+
+      - name: Populate metadata.json __MODULE_VERSION__
+        uses: jacobtomlinson/gha-find-replace@v2
+        with:
+          find: "__MODULE_VERSION__"
+          replace: ${{ steps.get_version.outputs.version }}
+          regex: false
+
+      - name: Copy triggers
+        run: |
+          if [[ -d "./triggers" ]]
+          then
+            mkdir ./dist/triggers
+            cp -a ./triggers/. ./dist/triggers
+          fi
+
+      - name: Copy shared
+        run: |
+          if [[ -d "./shared" ]]
+          then
+            mkdir ./dist/shared
+            cp -a ./shared/. ./dist/shared
+          fi
+
+      - name: Build module
+        run: |
+          cd module
           yarn
           yarn build
 
-      - name: Copy metadata.json & config.json & generate REPO + VERSION
+      - name: Copy module
         run: |
-          cp ./metadata.json ./dist/metadata.json
-          cp ./defaultConfig.json ./dist/config.json
-          echo ${{ github.repository }} > ./dist/REPO.TXT
-          echo ${{ steps.get_version.outputs.version }} > ./dist/VERSION.TXT
+          mkdir ./dist/module
+          cp -a ./module/build/. ./dist/module
 
       - name: Pack Linux x64
         if: startsWith(github.ref, 'refs/tags/') && startsWith(matrix.os, 'ubuntu')
         run: |
           cd ./dist/
-          npx bestzip ../module-midi-linux-x64-${{ steps.get_version.outputs.version }}.zip .
+          npx bestzip ../${{ github.event.repository.name }}-linux-x64-${{ steps.get_version.outputs.version }}.zip .
 
       - name: Pack Win x64
         if: startsWith(github.ref, 'refs/tags/') && startsWith(matrix.os, 'windows')
         run: |
           cd ./dist/
-          npx bestzip ../module-midi-win-x64-${{ steps.get_version.outputs.version }}.zip .
+          npx bestzip ../${{ github.event.repository.name }}-win-x64-${{ steps.get_version.outputs.version }}.zip .
 
       - name: Pack Macos x64
         if: startsWith(github.ref, 'refs/tags/') && startsWith(matrix.os, 'macos')
         run: |
           cd ./dist/
-          npx bestzip ../module-midi-macos-x64-${{ steps.get_version.outputs.version }}.zip .
+          npx bestzip ../${{ github.event.repository.name }}-macos-x64-${{ steps.get_version.outputs.version }}.zip .
 
       - name: Release
         uses: softprops/action-gh-release@v1
