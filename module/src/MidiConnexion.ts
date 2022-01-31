@@ -1,4 +1,4 @@
-import { EvntCom } from "evntcom-js";
+import { EvntCom } from "@evntboard/evntcom-node";
 import { Input, getInputs } from "easymidi";
 import { IConfigItem } from "./ConfigLoader";
 

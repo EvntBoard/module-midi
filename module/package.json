@@ -21,8 +21,8 @@
   },
   "homepage": "https://github.com/EvntBoard/module-midi#readme",
   "dependencies": {
-    "easymidi": "^2.0.5",
-    "evntcom-js": "https://github.com/EvntBoard/evntcom-js.git"
+    "@evntboard/evntcom-node": "https://github.com/EvntBoard/evntcom-node.git",
+    "easymidi": "^2.0.5"
   },
   "devDependencies": {
     "@types/node": "^14.14.25",

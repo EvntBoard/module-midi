@@ -10,7 +10,7 @@ jobs:
   release:
     strategy:
       matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
 
     runs-on: ${{ matrix.os }}
 
@@ -33,53 +33,34 @@ jobs:
           sudo apt-get install libasound2-dev
 
       - name: Prepare dist
+        shell: bash
         run: mkdir ./dist
 
       - name: Copy metadata.json
+        shell: bash
         run: |
           cp ./metadata.json ./dist/metadata.json
 
-      - name: Copy defaultConfig.json
+      - name: Copy config.json
+        shell: bash
         run: |
           cp ./config.json ./dist/config.json
 
-      - name: Populate metadata.json __MODULE_REPO__
-        uses: jacobtomlinson/gha-find-replace@v2
-        with:
-          find: "__MODULE_REPO__"
-          replace: ${{ github.repository }}
-          regex: false
-
-      - name: Populate metadata.json __MODULE_VERSION__
-        uses: jacobtomlinson/gha-find-replace@v2
-        with:
-          find: "__MODULE_VERSION__"
-          replace: ${{ steps.get_version.outputs.version }}
-          regex: false
-
-      - name: Copy triggers
+      - name: Populate metadata.json __MODULE_REPO__ / __MODULE_VERSION__
+        shell: bash
         run: |
-          if [[ -d "./triggers" ]]
-          then
-            mkdir ./dist/triggers
-            cp -a ./triggers/. ./dist/triggers
-          fi
-
-      - name: Copy shared
-        run: |
-          if [[ -d "./shared" ]]
-          then
-            mkdir ./dist/shared
-            cp -a ./shared/. ./dist/shared
-          fi
+          npx rexreplace '__MODULE_REPO__' '${{ github.repository }}' ./dist/metadata.json
+          npx rexreplace '__MODULE_VERSION__' '${{ steps.get_version.outputs.version }}' ./dist/metadata.json
 
       - name: Build module
+        shell: bash
         run: |
           cd module
           yarn
           yarn build
 
       - name: Copy module
+        shell: bash
         run: |
           mkdir ./dist/module
           cp -a ./module/build/. ./dist/module
