@@ -30,6 +30,7 @@ export class EasyMidiService {
 
     try {
       if (!this.configService.midiDevice) {
+        this.loggerService.error("No device set midi module ...");
         throw new Error("No device set midi module ...");
       }
 
