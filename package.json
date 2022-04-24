@@ -52,6 +52,7 @@
       "dist/**/*.js"
     ],
     "assets": [
+      "node_modules/midi/build/Release/midi.node",
       "node_modules/es-get-iterator/**/*",
       "node_modules/iterate-value/**/*"
     ]
