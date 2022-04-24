@@ -1,26 +1,30 @@
-import { inject, injectable } from "tsyringe";
+import {delay, inject, injectable} from "tsyringe";
 import { Input, getInputs } from "easymidi";
 
 import { EventType } from "../type/Event";
 import { LoggerService } from "./Logger";
 import { ConfigService } from "./Config";
-import axios from "axios";
+import {EvntBoardService} from "./EvntBoard";
 
 @injectable()
 export class EasyMidiService {
   private configService: ConfigService;
   private loggerService: LoggerService;
+  private evntBoardService: EvntBoardService;
+  private input: Input;
 
   constructor(
     @inject(ConfigService) configService: ConfigService,
     @inject(LoggerService) loggerService: LoggerService,
+    @inject(delay(() => EvntBoardService)) evntBoardService: EvntBoardService
   ) {
     this.configService = configService;
     this.loggerService = loggerService;
+    this.evntBoardService = evntBoardService;
   }
-
+  
   async load() {
-    this.sendEvent({
+    this.evntBoardService.rpc.notify("event.new", {
       name: EventType.LIST,
       payload: {
         devices: getInputs()
@@ -34,137 +38,137 @@ export class EasyMidiService {
         throw new Error("No device set midi module ...");
       }
 
-      this.sendEvent({
+      this.evntBoardService.rpc.notify("event.new", {
         name: EventType.LOAD,
         emitter: this.configService.name
       });
 
-      const input = new Input(this.configService.midiDevice);
+      this.input = new Input(this.configService.midiDevice);
 
-      input.on("noteon", (message) => {
-        this.sendEvent({
+      this.input.on("noteon", (message) => {
+        this.evntBoardService.rpc.notify("event.new", {
           name: EventType.NOTEON,
           payload: message,
           emitter: this.configService.name
         });
       });
 
-      input.on("noteoff", (message) => {
-        this.sendEvent({
+      this.input.on("noteoff", (message) => {
+        this.evntBoardService.rpc.notify("event.new", {
           name: EventType.NOTEOFF,
           payload: message,
           emitter: this.configService.name
         });
       });
 
-      input.on("poly aftertouch", (message) => {
-        this.sendEvent({
+      this.input.on("poly aftertouch", (message) => {
+        this.evntBoardService.rpc.notify("event.new", {
           name: EventType.POLY_AFTERTOUCH,
           payload: message,
           emitter: this.configService.name
         });
       });
 
-      input.on("cc", (message) => {
-        this.sendEvent({
+      this.input.on("cc", (message) => {
+        this.evntBoardService.rpc.notify("event.new", {
           name: EventType.CONTROL_CHANGE,
           payload: message,
           emitter: this.configService.name
         });
       });
 
-      input.on("program", (message) => {
-        this.sendEvent({
+      this.input.on("program", (message) => {
+        this.evntBoardService.rpc.notify("event.new", {
           name: EventType.PROGRAM,
           payload: message,
           emitter: this.configService.name
         });
       });
 
-      input.on("channel aftertouch", (message) => {
-        this.sendEvent({
+      this.input.on("channel aftertouch", (message) => {
+        this.evntBoardService.rpc.notify("event.new", {
           name: EventType.CHANNEL_AFTERTOUCH,
           payload: message,
           emitter: this.configService.name
         });
       });
 
-      input.on("pitch", (message) => {
-        this.sendEvent({
+      this.input.on("pitch", (message) => {
+        this.evntBoardService.rpc.notify("event.new", {
           name: EventType.PITCH,
           payload: message,
           emitter: this.configService.name
         });
       });
 
-      input.on("position", (message) => {
-        this.sendEvent({
+      this.input.on("position", (message) => {
+        this.evntBoardService.rpc.notify("event.new", {
           name: EventType.POSITION,
           payload: message,
           emitter: this.configService.name
         });
       });
 
-      input.on("mtc", (message) => {
-        this.sendEvent({
+      this.input.on("mtc", (message) => {
+        this.evntBoardService.rpc.notify("event.new", {
           name: EventType.MTC,
           payload: message,
           emitter: this.configService.name
         });
       });
 
-      input.on("select", (message) => {
-        this.sendEvent({
+      this.input.on("select", (message) => {
+        this.evntBoardService.rpc.notify("event.new", {
           name: EventType.SELECT,
           payload: message,
           emitter: this.configService.name
         });
       });
 
-      input.on("clock", () => {
-        this.sendEvent({
+      this.input.on("clock", () => {
+        this.evntBoardService.rpc.notify("event.new", {
           name: EventType.CLOCK,
           emitter: this.configService.name
         });
       });
 
-      input.on("start", () => {
-        this.sendEvent({
+      this.input.on("start", () => {
+        this.evntBoardService.rpc.notify("event.new", {
           name: EventType.START,
           emitter: this.configService.name
         });
       });
 
-      input.on("continue", () => {
-        this.sendEvent({
+      this.input.on("continue", () => {
+        this.evntBoardService.rpc.notify("event.new", {
           name: EventType.CONTINUE,
           emitter: this.configService.name
         });
       });
 
-      input.on("stop", () => {
-        this.sendEvent({
+      this.input.on("stop", () => {
+        this.evntBoardService.rpc.notify("event.new", {
           name: EventType.STOP,
           emitter: this.configService.name
         });
       });
 
-      input.on("activesense", () => {
-        this.sendEvent({
+      this.input.on("activesense", () => {
+        this.evntBoardService.rpc.notify("event.new", {
           name: EventType.ACTIVE_SENSE,
           emitter: this.configService.name
         });
       });
 
-      input.on("reset", () => {
-        this.sendEvent({
+      this.input.on("reset", () => {
+        this.evntBoardService.rpc.notify("event.new", {
           name: EventType.RESET,
           emitter: this.configService.name
         });
       });
 
-      input.on("sysex", (message) => {
-        this.sendEvent({
+      this.input.on("sysex", (message) => {
+        this.evntBoardService.rpc.notify("event.new", {
           name: EventType.SYSEX,
           payload: message,
           emitter: this.configService.name
@@ -172,7 +176,7 @@ export class EasyMidiService {
       });
     } catch (e) {
       console.error(e);
-      this.sendEvent({
+      this.evntBoardService.rpc.notify("event.new", {
         name: EventType.ERROR,
         payload: e,
         emitter: this.configService.name
@@ -180,7 +184,7 @@ export class EasyMidiService {
     }
   }
 
-  private sendEvent = (event: any) => {
-    axios.post(`http://${this.configService.host}:${this.configService.port}/api/event/new`, event)
+  async unload() {
+    this.input = null;
   }
 }
