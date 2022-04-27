@@ -1,4 +1,4 @@
-name: Module midi
+name: Release
 
 on:
   workflow_dispatch:
@@ -43,7 +43,7 @@ jobs:
         shell: bash
         run: |
           yarn build:x64:linux
-          mv ./build/linux-x64/module-midi ./build/linux-x64/${{ github.event.repository.name }}-linux-x64-${{ steps.get_version.outputs.version }}
+          mv ./build/linux-x64/${{ github.event.repository.name }} ./build/linux-x64/${{ github.event.repository.name }}-linux-x64-${{ steps.get_version.outputs.version }}
           cd ./build/linux-x64/
           npx bestzip ../${{ github.event.repository.name }}-linux-x64-${{ steps.get_version.outputs.version }}.zip .
 
@@ -52,7 +52,7 @@ jobs:
         shell: bash
         run: |
           yarn build:x64:win
-          mv ./build/win-x64/module-midi.exe ./build/win-x64/${{ github.event.repository.name }}-win-x64-${{ steps.get_version.outputs.version }}.exe
+          mv ./build/win-x64/${{ github.event.repository.name }}.exe ./build/win-x64/${{ github.event.repository.name }}-win-x64-${{ steps.get_version.outputs.version }}.exe
           cd ./build/win-x64/
           npx bestzip ../${{ github.event.repository.name }}-win-x64-${{ steps.get_version.outputs.version }}.zip .
 
@@ -61,7 +61,7 @@ jobs:
         shell: bash
         run: |
           yarn build:x64:macos
-          mv ./build/macos-x64/module-midi ./build/macos-x64/${{ github.event.repository.name }}-macos-x64-${{ steps.get_version.outputs.version }}
+          mv ./build/macos-x64/${{ github.event.repository.name }} ./build/macos-x64/${{ github.event.repository.name }}-macos-x64-${{ steps.get_version.outputs.version }}
           cd ./build/macos-x64/
           npx bestzip ../${{ github.event.repository.name }}-macos-x64-${{ steps.get_version.outputs.version }}.zip .
 

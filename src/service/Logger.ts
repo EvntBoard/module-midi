@@ -8,7 +8,7 @@ import { ConfigService } from "./Config";
 
 const getCurrentData = () => {
   const currentDate = new Date();
-  return `module-midi-${process.pid}-${(currentDate.getMonth() + 1)
+  return `${process.pid}-${(currentDate.getMonth() + 1)
     .toString()
     .padStart(2, "0")}-${currentDate
     .getDate()
@@ -31,7 +31,7 @@ const getCurrentData = () => {
     .padStart(4, "0")}`;
 };
 
-const logFileName = `log-${getCurrentData()}.txt`;
+const logFileName = `log-module-midi-${getCurrentData()}.txt`;
 
 @singleton()
 export class LoggerService {

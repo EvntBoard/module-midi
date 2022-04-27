@@ -42,15 +42,15 @@ export class EvntBoardService {
     );
 
     this.rpc.addMethod('connected', async () => {
+      this.rpc.notify("session.register", {
+        name: 'module-midi',
+        module: this.configService.name
+      });
       this.loggerService.info(`Connected`);
       this.attempts = 0;
       this.currentEasyMidiService = getInstance(EasyMidiService);
 
       await this.currentEasyMidiService.load();
-
-      await this.rpc.notify("module.register", {
-        name: this.configService.name,
-      });
     })
   }
 
